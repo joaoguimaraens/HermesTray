@@ -1,0 +1,41 @@
+name: Build and validate
+description: Build, test and package the Windows x64 launcher
+inputs:
+  tag:
+    description: Release tag; defaults to VERSION for branch builds
+    required: false
+    default: ''
+outputs:
+  path:
+    description: Validated ZIP path
+    value: ${{ steps.package.outputs.path }}
+  sha256:
+    description: ZIP SHA-256
+    value: ${{ steps.package.outputs.sha256 }}
+runs:
+  using: composite
+  steps:
+    - name: Prepare build tools
+      shell: powershell
+      run: |
+        "TMPDIR=$env:RUNNER_TEMP" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+        Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Scope CurrentUser -Force | Out-Null
+        Install-Module ps2exe -RequiredVersion 1.0.18 -Scope CurrentUser -Repository PSGallery -Force
+    - name: Build and test
+      shell: powershell
+      env:
+        RELEASE_TAG: ${{ inputs.tag }}
+      run: |
+        & .\Test.ps1 -Build -Tag $env:RELEASE_TAG
+    - name: Package
+      id: package
+      shell: powershell
+      env:
+        RELEASE_TAG: ${{ inputs.tag }}
+      run: |
+        . .\scripts\Version.ps1
+        $tag = (Get-HermesTrayVersion $env:RELEASE_TAG).Tag
+        $path = & .\Release.ps1 -Tag $tag -OutputDirectory (Join-Path $env:RUNNER_TEMP 'release')
+        "path=$path" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+        "sha256=$((Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash.ToLowerInvariant())" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append

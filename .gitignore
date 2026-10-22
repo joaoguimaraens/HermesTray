@@ -1,0 +1,39 @@
+# Build outputs and compiled test fixtures
+/dist/
+/release/
+bin/
+obj/
+*.exe
+*.dll
+*.pdb
+
+# Logs and test results
+/logs/
+/TestResults/
+*.log
+*.log.*
+
+# Temporary files and backups
+*.tmp
+*.temp
+*.bak
+*~
+
+# Local environment files and signing credentials
+.env
+.env.*
+!.env.example
+!.env.sample
+*.pfx
+*.p12
+
+# Editor and user-specific settings
+.vs/
+.idea/
+*.user
+*.suo
+
+# Operating system files
+Thumbs.db
+Desktop.ini
+.DS_Store
