@@ -18,6 +18,10 @@ To start at login, add a shortcut to the executable in `shell:startup` (**Win + 
 
 For mobile access, use [Hermes Mobile](https://hy4ri.github.io/hermes-mobile/) over a private Tailscale or ZeroTier network. Keep authentication enabled.
 
+### Microsoft Defender
+
+Microsoft Defender may report a false positive and flag `HermesTray.exe` as a threat. If this happens, add the executable to Microsoft Defender's exclusion list to run HermesTray.
+
 ## Documentation
 
 [Setup and troubleshooting](docs/STARTUP.md) | [Build and releases](docs/RELEASES.md) | [Tests](docs/TESTS.md)
